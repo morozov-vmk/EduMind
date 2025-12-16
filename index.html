@@ -40,9 +40,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const tasksGrid = document.getElementById('tasksGrid');
-      const activeTask = 5; // Только 5 задание активно
+      const activeTask = 5;
       
-      // Создаем 27 заданий
       for (let i = 1; i <= 27; i++) {
         const taskDiv = document.createElement('div');
         taskDiv.className = `task-card ${i === activeTask ? 'active' : 'inactive'}`;
@@ -62,9 +61,12 @@
         tasksGrid.appendChild(taskDiv);
       }
       
-      // Кнопка перехода к реальным задачам
       const toExamBtn = document.getElementById('toExamBtn');
-      toExamBtn.disabled = true; // Пока неактивна
+      toExamBtn.disabled = true;
+      
+      toExamBtn.addEventListener('click', function() {
+        window.location.href = 'exam.html';
+      });
     });
   </script>
 </body>

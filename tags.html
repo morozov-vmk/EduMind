@@ -18,7 +18,7 @@
     </div>
 
     <div class="controls">
-      <button class="back-btn" onclick="window.history.back()">
+      <button class="nav-btn secondary" onclick="window.location.href='index.html'">
         ← Назад к выбору задания
       </button>
       <button class="nav-btn" id="toRealTaskBtn">
@@ -46,7 +46,6 @@
       const tagsContainer = document.getElementById('tagsContainer');
       const toRealTaskBtn = document.getElementById('toRealTaskBtn');
       
-      // Пример тегов для задания 5
       const tags = [
         { id: 'loops', name: 'Циклы', color: '#3498db' },
         { id: 'arrays', name: 'Массивы', color: '#2ecc71' },
@@ -56,7 +55,6 @@
         { id: 'strings', name: 'Строки', color: '#1abc9c' }
       ];
       
-      // Создаем карточки тегов
       tags.forEach(tag => {
         const tagCard = document.createElement('div');
         tagCard.className = 'tag-card';
@@ -70,16 +68,16 @@
         tagsContainer.appendChild(tagCard);
       });
       
-      // Обработчик кнопок "Изучить"
       document.querySelectorAll('.study-btn').forEach(btn => {
         btn.addEventListener('click', function() {
           const tag = this.getAttribute('data-tag');
           localStorage.setItem('selectedTag', tag);
+          localStorage.setItem('selectedTagName', 
+            tags.find(t => t.id === tag)?.name || tag);
           window.location.href = 'study.html';
         });
       });
       
-      // Кнопка перехода к реальной задаче
       toRealTaskBtn.addEventListener('click', function() {
         window.location.href = 'exam.html';
       });

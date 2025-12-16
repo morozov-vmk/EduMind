@@ -8,31 +8,30 @@
 </head>
 <body>
   <div class="container exam-mode">
-    <!-- Верхняя панель -->
     <div class="top-panel">
-      <!-- Левая часть - теги (кликабельные) -->
-      <div class="exam-tags" id="examTags">
-        <!-- Теги будут добавлены динамически -->
+      <div class="exam-task-info">
+        <span class="task-num">Задание 5</span>
+        <span class="task-type">ЕГЭ по информатике</span>
+        <span class="difficulty">Сложность: Средняя</span>
       </div>
       
-      <!-- Правая часть - функциональные кнопки -->
       <div class="exam-actions">
-        <button class="action-btn" id="hintBtn">Подсказка</button>
-        <button class="action-btn" id="solutionBtn">Решение</button>
-        <button class="action-btn" id="statisticsBtn">Статистика</button>
+        <button class="action-btn" id="hintBtn">💡 Подсказка</button>
+        <button class="action-btn" id="solutionBtn">🔧 Решение</button>
+        <button class="action-btn" id="statisticsBtn">📊 Статистика</button>
+        <button class="nav-btn secondary" onclick="window.location.href='tags.html'">
+          📚 К изучению тем
+        </button>
         <button class="nav-btn secondary" onclick="window.location.href='index.html'">
-          К изучению тем
+          ← Назад к выбору задания
         </button>
       </div>
     </div>
 
-    <!-- Основное содержимое -->
     <div class="main-content">
-      <!-- Левая колонка - условие задачи -->
       <div class="exam-left">
-        <div class="section-header">
-          <h2>Задание <span id="examTaskNumber">5</span> ЕГЭ</h2>
-          <div class="difficulty">Сложность: Средняя</div>
+        <div class="exam-tags-panel" id="examTags">
+          <!-- Теги будут добавлены динамически -->
         </div>
         
         <div class="task-content" id="taskContent">
@@ -50,7 +49,6 @@
         </div>
       </div>
 
-      <!-- Правая колонка - ответ LLM -->
       <div class="exam-right">
         <div class="section-header">
           <h3>Проверка решения</h3>
@@ -58,7 +56,6 @@
         </div>
         
         <div class="llm-response" id="examLlmResponse">
-          <!-- Ответ LLM будет здесь -->
           <div class="placeholder">
             Решение будет проверено автоматически после отправки
           </div>
@@ -96,17 +93,18 @@
       </div>
     </div>
 
-    <!-- Нижняя панель -->
-    <div class="bottom-panel">
+    <div class="exam-bottom-panel">
       <button class="nav-btn secondary" id="prevTaskBtn" disabled>
         ← Предыдущая задача
       </button>
-      <button class="nav-btn" id="nextExamTaskBtn">
-        Следующая задача →
-      </button>
+      
       <div class="task-counter">
         Задача <span id="currentTaskNum">5</span> из 27
       </div>
+      
+      <button class="nav-btn" id="nextExamTaskBtn">
+        Следующая задача →
+      </button>
     </div>
   </div>
 
@@ -114,10 +112,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const selectedTask = localStorage.getItem('selectedTask') || 5;
-      document.getElementById('examTaskNumber').textContent = selectedTask;
       document.getElementById('currentTaskNum').textContent = selectedTask;
       
-      // Данные для задач ЕГЭ
       const examTasks = {
         5: {
           title: "Анализ алгоритмов",
@@ -148,30 +144,35 @@
             <p>Укажите минимальное число N, для которого результат работы алгоритма больше 75. В ответе запишите это число в десятичной системе счисления.</p>
           `,
           answer: "84",
-          tags: ["двоичная система", "алгоритмы", "остатки"]
+          tags: ["Двоичная система", "Алгоритмы", "Остатки", "Циклы", "Функции"]
         }
       };
       
-      // Загружаем задачу
       const currentTask = examTasks[selectedTask];
       if (currentTask) {
         document.getElementById('taskContent').innerHTML = currentTask.content;
         
-        // Добавляем теги
         const examTags = document.getElementById('examTags');
         currentTask.tags.forEach(tag => {
           const tagElement = document.createElement('span');
-          tagElement.className = 'exam-tag clickable';
+          tagElement.className = 'exam-tag';
           tagElement.textContent = tag;
           tagElement.addEventListener('click', function() {
-            localStorage.setItem('selectedTag', tag);
-            window.location.href = 'study.html';
+            localStorage.setItem('selectedTag', tag.toLowerCase());
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `Переходим к изучению темы: <strong>${tag}</strong>`;
+            document.querySelector('.exam-left').prepend(notification);
+            
+            setTimeout(() => {
+              window.location.href = 'study.html';
+            }, 2000);
           });
           examTags.appendChild(tagElement);
         });
       }
       
-      // Таймер
       let seconds = 0;
       const timerElement = document.getElementById('timer');
       setInterval(() => {
@@ -181,9 +182,9 @@
         timerElement.textContent = `⏱️ ${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
       }, 1000);
       
-      // Обработчики кнопок
       const hintBtn = document.getElementById('hintBtn');
       const solutionBtn = document.getElementById('solutionBtn');
+      const statisticsBtn = document.getElementById('statisticsBtn');
       const submitBtn = document.getElementById('examSubmitBtn');
       const nextBtn = document.getElementById('nextExamTaskBtn');
       
@@ -228,11 +229,65 @@ for N in range(1, 100):
         `;
       });
       
+      statisticsBtn.addEventListener('click', function() {
+        const progress = JSON.parse(localStorage.getItem('userProgress') || '{}');
+        const totalTasks = 27;
+        const completedTasks = Object.keys(progress).length;
+        const accuracy = completedTasks > 0 ? 
+          Math.round((Object.values(progress).filter(p => p.score > 7).length / completedTasks) * 100) : 0;
+        
+        const response = document.getElementById('examLlmResponse');
+        response.innerHTML = `
+          <div class="statistics-content">
+            <h4>📊 Ваша статистика</h4>
+            
+            <div class="stats-overview">
+              <div class="stat-row">
+                <span class="stat-label">Всего заданий:</span>
+                <span class="stat-value">${totalTasks}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Выполнено:</span>
+                <span class="stat-value">${completedTasks}</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Точность:</span>
+                <span class="stat-value">${accuracy}%</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-label">Средний балл:</span>
+                <span class="stat-value">${completedTasks > 0 ? 
+                  (Object.values(progress).reduce((sum, p) => sum + p.score, 0) / completedTasks).toFixed(1) : '0'}/10</span>
+              </div>
+            </div>
+            
+            <div class="progress-chart">
+              <h5>Прогресс по заданиям:</h5>
+              <div class="chart-bar">
+                <div class="chart-fill" style="width: ${(completedTasks / totalTasks) * 100}%"></div>
+              </div>
+              <div class="chart-labels">
+                <span>${completedTasks} выполнено</span>
+                <span>${totalTasks - completedTasks} осталось</span>
+              </div>
+            </div>
+            
+            <div class="recommendations">
+              <h5>🎯 Рекомендации:</h5>
+              <ul>
+                <li>Сосредоточьтесь на заданиях 5-8 для набора базовых баллов</li>
+                <li>Решайте больше задач на алгоритмы (задания 12, 17, 24)</li>
+                <li>Тренируйтесь в режиме реального времени</li>
+              </ul>
+            </div>
+          </div>
+        `;
+      });
+      
       submitBtn.addEventListener('click', function() {
         const code = document.getElementById('examCodeInput').value;
         const answer = document.getElementById('examAnswerInput').value;
         
-        // Имитация проверки
         const response = `
           <div class="verdict-content">
             <h4>✅ Проверка завершена!</h4>
@@ -258,12 +313,9 @@ for N in range(1, 100):
       });
       
       nextBtn.addEventListener('click', function() {
-        // В реальной системе здесь будет переход к следующей задаче
-        // Пока просто показываем сообщение
         alert('Следующее задание пока недоступно. Продолжайте тренироваться на текущем!');
       });
       
-      // Загрузка файла
       document.getElementById('examUploadBtn').addEventListener('click', function() {
         const input = document.createElement('input');
         input.type = 'file';

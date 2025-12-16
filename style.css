@@ -1,4 +1,3 @@
-/* Общие стили */
 * {
     margin: 0;
     padding: 0;
@@ -23,7 +22,6 @@
     gap: 20px;
   }
   
-  /* Хедер */
   .main-header {
     text-align: center;
     padding: 30px 0;
@@ -46,7 +44,6 @@
     font-size: 1.1rem;
   }
   
-  /* Сетка заданий */
   .tasks-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -110,7 +107,6 @@
     background: #64748b;
   }
   
-  /* Контейнер тегов */
   .tags-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -143,7 +139,6 @@
     margin-bottom: 20px;
   }
   
-  /* Кнопки */
   .nav-btn {
     padding: 15px 30px;
     background: linear-gradient(90deg, #3b82f6, #8b5cf6);
@@ -167,6 +162,7 @@
   .nav-btn.secondary {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
   }
   
   .nav-btn.secondary:hover {
@@ -199,7 +195,6 @@
     transform: translateY(-2px);
   }
   
-  /* Панели управления */
   .controls {
     display: flex;
     justify-content: space-between;
@@ -218,7 +213,6 @@
     margin-top: auto;
   }
   
-  /* Режим изучения */
   .study-mode .top-panel {
     display: flex;
     justify-content: space-between;
@@ -266,7 +260,6 @@
     transition: width 0.5s ease;
   }
   
-  /* Основное содержимое изучения */
   .study-mode .main-content {
     display: flex;
     gap: 30px;
@@ -316,7 +309,6 @@
     color: #a78bfa;
   }
   
-  /* Практическая часть */
   .task-description {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
@@ -402,7 +394,6 @@
     white-space: pre-wrap;
   }
   
-  /* Режим экзамена */
   .exam-mode .top-panel {
     display: flex;
     justify-content: space-between;
@@ -414,34 +405,107 @@
     border: 1px solid rgba(239, 68, 68, 0.3);
   }
   
-  .exam-tags {
+  .exam-task-info {
     display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
   }
   
-  .exam-tag {
-    padding: 8px 16px;
-    background: rgba(59, 130, 246, 0.2);
-    border-radius: 20px;
+  .task-num {
+    font-size: 1.2rem;
+    font-weight: bold;
     color: #60a5fa;
-    font-size: 14px;
   }
   
-  .exam-tag.clickable {
-    cursor: pointer;
-    transition: all 0.3s;
+  .task-type {
+    padding: 5px 10px;
+    background: rgba(245, 158, 11, 0.2);
+    border-radius: 20px;
+    color: #f59e0b;
+    font-size: 0.9rem;
   }
   
-  .exam-tag.clickable:hover {
-    background: rgba(59, 130, 246, 0.3);
-    transform: translateY(-2px);
+  .difficulty {
+    padding: 5px 10px;
+    background: rgba(34, 197, 94, 0.2);
+    border-radius: 20px;
+    color: #22c55e;
+    font-size: 0.9rem;
   }
   
   .exam-actions {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .exam-actions .action-btn {
+    padding: 10px 20px;
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid #3b82f6;
+    color: #60a5fa;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .exam-actions .action-btn:hover {
+    background: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .exam-actions .nav-btn.secondary {
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    font-size: 14px;
+  }
+  
+  .exam-actions .nav-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  #hintBtn {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: #f59e0b;
+    color: #f59e0b;
+  }
+  
+  #hintBtn:hover {
+    background: rgba(245, 158, 11, 0.3);
+  }
+  
+  #solutionBtn {
+    background: rgba(34, 197, 94, 0.2);
+    border-color: #22c55e;
+    color: #22c55e;
+  }
+  
+  #solutionBtn:hover {
+    background: rgba(34, 197, 94, 0.3);
+  }
+  
+  #statisticsBtn {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: #8b5cf6;
+    color: #8b5cf6;
+  }
+  
+  #statisticsBtn:hover {
+    background: rgba(139, 92, 246, 0.3);
   }
   
   .exam-mode .main-content {
@@ -458,20 +522,38 @@
     gap: 20px;
   }
   
+  .exam-tags-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .exam-tag {
+    padding: 8px 16px;
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 20px;
+    color: #60a5fa;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .exam-tag:hover {
+    background: rgba(59, 130, 246, 0.3);
+    transform: translateY(-2px);
+  }
+  
   .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-bottom: 15px;
     border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-  }
-  
-  .difficulty {
-    padding: 6px 12px;
-    background: rgba(245, 158, 11, 0.2);
-    border-radius: 20px;
-    color: #f59e0b;
-    font-size: 14px;
   }
   
   .task-content {
@@ -565,6 +647,16 @@
     color: #94a3b8;
   }
   
+  .exam-bottom-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    margin-top: 20px;
+  }
+  
   .task-counter {
     padding: 10px 20px;
     background: rgba(255, 255, 255, 0.05);
@@ -572,7 +664,6 @@
     font-weight: bold;
   }
   
-  /* Информационные панели */
   .info-panel {
     display: flex;
     justify-content: space-between;
@@ -607,8 +698,35 @@
     margin-top: auto;
   }
   
-  /* Стили для ответов */
-  .hint-content, .solution-content, .verdict-content {
+  .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    text-align: center;
+    padding: 40px;
+  }
+  
+  .placeholder::before {
+    content: "📝";
+    font-size: 3rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+  
+  .notification {
+    animation: slideIn 0.3s ease;
+    background: rgba(34, 197, 94, 0.2);
+    border: 1px solid #22c55e;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+  }
+  
+  .hint-content, .solution-content, .verdict-content, .statistics-content {
     animation: fadeIn 0.5s ease;
   }
   
@@ -644,13 +762,91 @@
     margin-bottom: 10px;
   }
   
-  /* Анимации */
+  .statistics-content h4 {
+    color: #60a5fa;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .stats-overview {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .stat-row:last-child {
+    border-bottom: none;
+  }
+  
+  .stat-label {
+    color: #94a3b8;
+  }
+  
+  .stat-value {
+    font-weight: bold;
+    color: #60a5fa;
+    font-size: 1.1rem;
+  }
+  
+  .progress-chart {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .progress-chart h5 {
+    color: #f59e0b;
+    margin-bottom: 15px;
+  }
+  
+  .chart-bar {
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  
+  .chart-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #22c55e);
+    border-radius: 10px;
+    transition: width 1s ease;
+  }
+  
+  .chart-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #94a3b8;
+  }
+  
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
   
-  /* Полоса прокрутки */
+  @keyframes slideIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
   ::-webkit-scrollbar {
     width: 10px;
   }
@@ -669,7 +865,6 @@
     background: rgba(255, 255, 255, 0.3);
   }
   
-  /* Адаптивность */
   @media (max-width: 1200px) {
     .study-mode .main-content,
     .exam-mode .main-content {
@@ -698,7 +893,7 @@
       grid-template-columns: 1fr;
     }
     
-    .controls, .bottom-panel {
+    .controls, .bottom-panel, .exam-bottom-panel {
       flex-direction: column;
       gap: 15px;
     }
@@ -709,5 +904,22 @@
     
     .answer-section {
       flex-direction: column;
+    }
+    
+    .exam-actions {
+      flex-direction: column;
+      width: 100%;
+    }
+    
+    .exam-actions .action-btn,
+    .exam-actions .nav-btn.secondary {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .exam-task-info {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
     }
   }

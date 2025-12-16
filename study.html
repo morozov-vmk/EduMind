@@ -8,7 +8,6 @@
 </head>
 <body>
   <div class="container study-mode">
-    <!-- Верхняя панель -->
     <div class="top-panel">
       <div class="study-info">
         <span class="tag-badge" id="currentTag">Циклы</span>
@@ -24,7 +23,6 @@
     </div>
 
     <div class="main-content">
-      <!-- Левая колонка - теория -->
       <div class="theory-section">
         <div class="section-title">Теория</div>
         <div class="theory-content" id="theoryContent">
@@ -32,7 +30,6 @@
         </div>
       </div>
 
-      <!-- Правая колонка - практика -->
       <div class="practice-section">
         <div class="section-title">Практика</div>
         
@@ -71,8 +68,10 @@
       </div>
     </div>
 
-    <!-- Нижняя панель -->
     <div class="bottom-panel">
+      <button class="nav-btn secondary" onclick="window.location.href='index.html'">
+        ← К выбору задания
+      </button>
       <button class="nav-btn secondary" onclick="window.location.href='tags.html'">
         ← Вернуться к тегам
       </button>
@@ -89,10 +88,12 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const selectedTag = localStorage.getItem('selectedTag') || 'loops';
+      const selectedTagName = localStorage.getItem('selectedTagName') || 'Циклы';
       const selectedTask = localStorage.getItem('selectedTask') || 5;
       const currentTagElement = document.getElementById('currentTag');
       
-      // Данные для разных тегов
+      currentTagElement.textContent = selectedTagName;
+      
       const tagData = {
         'loops': {
           name: 'Циклы',
@@ -166,18 +167,12 @@ len(numbers)</code></pre>
         }
       };
       
-      // Устанавливаем текущий тег
-      currentTagElement.textContent = tagData[selectedTag]?.name || selectedTag;
-      
-      // Загружаем теорию
       document.getElementById('theoryContent').innerHTML = 
         tagData[selectedTag]?.theory || '<p>Теория для этого тега пока не загружена</p>';
       
-      // Загружаем задачу
       document.getElementById('taskDescription').innerHTML = 
         tagData[selectedTag]?.task.description || '<p>Задача не найдена</p>';
       
-      // Обработчики событий
       const submitBtn = document.getElementById('submitBtn');
       const nextTaskBtn = document.getElementById('nextTaskBtn');
       
@@ -185,7 +180,6 @@ len(numbers)</code></pre>
         const code = document.getElementById('codeInput').value;
         const answer = document.getElementById('answerInput').value;
         
-        // Имитация проверки
         const response = `
           ✅ Решение проверено!
           
@@ -205,7 +199,6 @@ len(numbers)</code></pre>
       });
       
       nextTaskBtn.addEventListener('click', function() {
-        // Обновляем прогресс
         const progressFill = document.getElementById('progressFill');
         const progressText = document.getElementById('progressText');
         const currentWidth = parseInt(progressFill.style.width);
@@ -214,11 +207,9 @@ len(numbers)</code></pre>
         progressFill.style.width = `${newWidth}%`;
         progressText.textContent = `${Math.floor(newWidth/10)}/10 задач`;
         
-        // Можно загрузить следующую задачу
         alert('Следующая задача загружается...');
       });
       
-      // Загрузка файла
       const uploadCodeBtn = document.getElementById('uploadCodeBtn');
       uploadCodeBtn.addEventListener('click', function() {
         const input = document.createElement('input');
