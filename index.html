@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подготовка к ЕГЭ - Выбор задания</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="main-header">
+      <h1>Подготовка к ЕГЭ по информатике</h1>
+      <p class="subtitle">Выберите задание для тренировки</p>
+    </header>
+
+    <div class="tasks-grid" id="tasksGrid">
+      <!-- 27 заданий будут сгенерированы через JS -->
+    </div>
+
+    <div class="info-panel">
+      <div class="task-info">
+        <h3>Информация о заданиях:</h3>
+        <ul>
+          <li>🎯 <strong>5 задание</strong> - анализ алгоритмов</li>
+          <li>🔒 Остальные задания откроются позже</li>
+          <li>📊 Активно задание: <span id="activeTask">5</span></li>
+        </ul>
+      </div>
+      <button class="nav-btn" id="toExamBtn" disabled>
+        Перейти к реальным задачам
+      </button>
+    </div>
+
+    <footer class="footer">
+      <p>Система подготовки к ЕГЭ по информатике © 2024</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const tasksGrid = document.getElementById('tasksGrid');
+      const activeTask = 5; // Только 5 задание активно
+      
+      // Создаем 27 заданий
+      for (let i = 1; i <= 27; i++) {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = `task-card ${i === activeTask ? 'active' : 'inactive'}`;
+        taskDiv.innerHTML = `
+          <div class="task-number">${i}</div>
+          <div class="task-title">Задание ${i}</div>
+          ${i === activeTask ? '<div class="task-badge">Активно</div>' : '<div class="task-badge inactive">Скоро</div>'}
+        `;
+        
+        if (i === activeTask) {
+          taskDiv.addEventListener('click', function() {
+            localStorage.setItem('selectedTask', i);
+            window.location.href = 'tags.html';
+          });
+        }
+        
+        tasksGrid.appendChild(taskDiv);
+      }
+      
+      // Кнопка перехода к реальным задачам
+      const toExamBtn = document.getElementById('toExamBtn');
+      toExamBtn.disabled = true; // Пока неактивна
+    });
+  </script>
+</body>
+</html>

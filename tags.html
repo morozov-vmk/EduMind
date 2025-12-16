@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Навыки для задания</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="main-header">
+      <h1>Навыки для задания <span id="taskNumber">5</span></h1>
+      <p class="subtitle">Выберите тему для изучения</p>
+    </header>
+
+    <div class="tags-container" id="tagsContainer">
+      <!-- Теги будут добавлены через JS -->
+    </div>
+
+    <div class="controls">
+      <button class="back-btn" onclick="window.history.back()">
+        ← Назад к выбору задания
+      </button>
+      <button class="nav-btn" id="toRealTaskBtn">
+        Перейти к реальной задаче →
+      </button>
+    </div>
+
+    <div class="description">
+      <h3>Как работать с системой:</h3>
+      <ol>
+        <li>Выберите тему для изучения</li>
+        <li>Изучите теорию по этой теме</li>
+        <li>Решите тренировочные задачи</li>
+        <li>Перейдите к реальной задаче ЕГЭ</li>
+      </ol>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const taskNumber = localStorage.getItem('selectedTask') || 5;
+      document.getElementById('taskNumber').textContent = taskNumber;
+      
+      const tagsContainer = document.getElementById('tagsContainer');
+      const toRealTaskBtn = document.getElementById('toRealTaskBtn');
+      
+      // Пример тегов для задания 5
+      const tags = [
+        { id: 'loops', name: 'Циклы', color: '#3498db' },
+        { id: 'arrays', name: 'Массивы', color: '#2ecc71' },
+        { id: 'functions', name: 'Функции', color: '#9b59b6' },
+        { id: 'complexity', name: 'Сложность алгоритмов', color: '#e74c3c' },
+        { id: 'recursion', name: 'Рекурсия', color: '#f39c12' },
+        { id: 'strings', name: 'Строки', color: '#1abc9c' }
+      ];
+      
+      // Создаем карточки тегов
+      tags.forEach(tag => {
+        const tagCard = document.createElement('div');
+        tagCard.className = 'tag-card';
+        tagCard.style.borderLeft = `5px solid ${tag.color}`;
+        tagCard.innerHTML = `
+          <h3>${tag.name}</h3>
+          <p>Изучите теорию и практикуйтесь</p>
+          <button class="study-btn" data-tag="${tag.id}">Изучить</button>
+        `;
+        
+        tagsContainer.appendChild(tagCard);
+      });
+      
+      // Обработчик кнопок "Изучить"
+      document.querySelectorAll('.study-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const tag = this.getAttribute('data-tag');
+          localStorage.setItem('selectedTag', tag);
+          window.location.href = 'study.html';
+        });
+      });
+      
+      // Кнопка перехода к реальной задаче
+      toRealTaskBtn.addEventListener('click', function() {
+        window.location.href = 'exam.html';
+      });
+    });
+  </script>
+</body>
+</html>

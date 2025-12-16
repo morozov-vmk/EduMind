@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Изучение темы</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container study-mode">
+    <!-- Верхняя панель -->
+    <div class="top-panel">
+      <div class="study-info">
+        <span class="tag-badge" id="currentTag">Циклы</span>
+        <span class="task-number">Задание 5</span>
+      </div>
+      <div class="progress">
+        <span>Прогресс: </span>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill" style="width: 30%"></div>
+        </div>
+        <span id="progressText">3/10 задач</span>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <!-- Левая колонка - теория -->
+      <div class="theory-section">
+        <div class="section-title">Теория</div>
+        <div class="theory-content" id="theoryContent">
+          <!-- Теория будет загружаться динамически -->
+        </div>
+      </div>
+
+      <!-- Правая колонка - практика -->
+      <div class="practice-section">
+        <div class="section-title">Практика</div>
+        
+        <div class="task-description" id="taskDescription">
+          <!-- Условие задачи -->
+        </div>
+
+        <div class="code-editor">
+          <div class="editor-header">
+            <span>Редактор кода (Python)</span>
+            <button class="upload-btn small" id="uploadCodeBtn">
+              📁 Загрузить код
+            </button>
+          </div>
+          <textarea id="codeInput" placeholder="Введите ваш код здесь..."></textarea>
+        </div>
+
+        <div class="answer-section">
+          <input 
+            type="text" 
+            id="answerInput" 
+            placeholder="Введите ответ (если требуется)..."
+            class="answer-input"
+          >
+          <button class="submit-btn" id="submitBtn">
+            Проверить решение
+          </button>
+        </div>
+
+        <div class="response-section">
+          <div class="section-title">Обратная связь</div>
+          <div class="response-content" id="llmResponse">
+            Здесь появится ответ системы после проверки
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Нижняя панель -->
+    <div class="bottom-panel">
+      <button class="nav-btn secondary" onclick="window.location.href='tags.html'">
+        ← Вернуться к тегам
+      </button>
+      <button class="nav-btn" id="nextTaskBtn">
+        Следующая задача →
+      </button>
+      <button class="nav-btn exam" onclick="window.location.href='exam.html'">
+        Перейти к реальному ЕГЭ
+      </button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectedTag = localStorage.getItem('selectedTag') || 'loops';
+      const selectedTask = localStorage.getItem('selectedTask') || 5;
+      const currentTagElement = document.getElementById('currentTag');
+      
+      // Данные для разных тегов
+      const tagData = {
+        'loops': {
+          name: 'Циклы',
+          theory: `
+            <h3>Циклы в Python</h3>
+            <p>Циклы позволяют выполнять блок кода несколько раз.</p>
+            
+            <h4>Цикл for:</h4>
+            <pre><code>for i in range(5):
+    print(i)  # 0 1 2 3 4</code></pre>
+            
+            <h4>Цикл while:</h4>
+            <pre><code>i = 0
+while i < 5:
+    print(i)
+    i += 1</code></pre>
+            
+            <h4>Практические советы:</h4>
+            <ul>
+              <li>Используйте range() для заданного количества итераций</li>
+              <li>Избегайте бесконечных циклов</li>
+              <li>Используйте break для досрочного выхода</li>
+            </ul>
+          `,
+          task: {
+            description: `
+              <h4>Задача: Сумма четных чисел</h4>
+              <p>Напишите программу, которая находит сумму всех четных чисел от 1 до N.</p>
+              <p><strong>Входные данные:</strong> целое число N</p>
+              <p><strong>Выходные данные:</strong> сумма четных чисел</p>
+              <p><strong>Пример:</strong></p>
+              <pre>Ввод: 10
+Вывод: 30  # 2 + 4 + 6 + 8 + 10 = 30</pre>
+            `,
+            answer: ''
+          }
+        },
+        'arrays': {
+          name: 'Массивы',
+          theory: `
+            <h3>Списки (массивы) в Python</h3>
+            <p>Списки - упорядоченные изменяемые коллекции.</p>
+            
+            <h4>Основные операции:</h4>
+            <pre><code># Создание списка
+numbers = [1, 2, 3, 4, 5]
+
+# Доступ к элементам
+print(numbers[0])  # 1
+print(numbers[-1]) # 5
+
+# Изменение
+numbers[0] = 10
+
+# Добавление
+numbers.append(6)
+
+# Длина списка
+len(numbers)</code></pre>
+          `,
+          task: {
+            description: `
+              <h4>Задача: Обратный массив</h4>
+              <p>Напишите функцию, которая возвращает список в обратном порядке.</p>
+              <p><strong>Пример:</strong></p>
+              <pre>Ввод: [1, 2, 3, 4, 5]
+Вывод: [5, 4, 3, 2, 1]</pre>
+            `,
+            answer: ''
+          }
+        }
+      };
+      
+      // Устанавливаем текущий тег
+      currentTagElement.textContent = tagData[selectedTag]?.name || selectedTag;
+      
+      // Загружаем теорию
+      document.getElementById('theoryContent').innerHTML = 
+        tagData[selectedTag]?.theory || '<p>Теория для этого тега пока не загружена</p>';
+      
+      // Загружаем задачу
+      document.getElementById('taskDescription').innerHTML = 
+        tagData[selectedTag]?.task.description || '<p>Задача не найдена</p>';
+      
+      // Обработчики событий
+      const submitBtn = document.getElementById('submitBtn');
+      const nextTaskBtn = document.getElementById('nextTaskBtn');
+      
+      submitBtn.addEventListener('click', function() {
+        const code = document.getElementById('codeInput').value;
+        const answer = document.getElementById('answerInput').value;
+        
+        // Имитация проверки
+        const response = `
+          ✅ Решение проверено!
+          
+          <strong>Анализ:</strong>
+          1. Синтаксис: ✓ Правильный
+          2. Логика: ✓ Соответствует задаче
+          3. Эффективность: ⚡ Хорошая
+          
+          <strong>Рекомендации:</strong>
+          - Можно оптимизировать, используя формулу суммы арифметической прогрессии
+          - Добавьте проверку на отрицательные числа
+          
+          <strong>Оценка: 8/10</strong>
+        `;
+        
+        document.getElementById('llmResponse').innerHTML = response;
+      });
+      
+      nextTaskBtn.addEventListener('click', function() {
+        // Обновляем прогресс
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const currentWidth = parseInt(progressFill.style.width);
+        const newWidth = Math.min(currentWidth + 10, 100);
+        
+        progressFill.style.width = `${newWidth}%`;
+        progressText.textContent = `${Math.floor(newWidth/10)}/10 задач`;
+        
+        // Можно загрузить следующую задачу
+        alert('Следующая задача загружается...');
+      });
+      
+      // Загрузка файла
+      const uploadCodeBtn = document.getElementById('uploadCodeBtn');
+      uploadCodeBtn.addEventListener('click', function() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.py';
+        input.onchange = function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+              document.getElementById('codeInput').value = event.target.result;
+            };
+            reader.readAsText(file);
+          }
+        };
+        input.click();
+      });
+    });
+  </script>
+</body>
+</html>
