@@ -1,233 +1,244 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Изучение темы</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изучение темы</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container study-mode">
-    <div class="top-panel">
-      <div class="study-info">
-        <span class="tag-badge" id="currentTag">Циклы</span>
-        <span class="task-number">Задание 5</span>
-      </div>
-      <div class="progress">
-        <span>Прогресс: </span>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill" style="width: 30%"></div>
+    <div class="container study-mode">
+        <div class="top-panel">
+            <div class="study-info">
+                <span class="tag-badge" id="currentTagName">Загрузка...</span>
+                <span class="task-number" id="currentTaskNumber">Задание</span>
+            </div>
+            <div class="progress">
+                <span>Прогресс: </span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <span id="progressText">0/0 задач</span>
+            </div>
         </div>
-        <span id="progressText">3/10 задач</span>
-      </div>
+
+        <div class="main-content">
+            <div class="theory-section">
+                <div class="section-title">Теория</div>
+                <div class="theory-content" id="theoryContent">
+                    <!-- Теория загружается динамически -->
+                </div>
+            </div>
+
+            <div class="practice-section">
+                <div class="section-title" id="practiceTitle">Практика</div>
+                
+                <div class="task-description" id="taskDescription">
+                    <!-- Условие задачи загружается динамически -->
+                </div>
+
+                <div class="code-editor">
+                    <div class="editor-header">
+                        <span>Редактор кода (Python)</span>
+                        <button class="upload-btn small" id="uploadCodeBtn">
+                            📁 Загрузить код
+                        </button>
+                    </div>
+                    <textarea id="codeInput" placeholder="Введите ваш код здесь..." spellcheck="false"></textarea>
+                </div>
+
+                <div class="answer-section">
+                    <input type="text" id="answerInput" placeholder="Введите ответ (если требуется)..." class="answer-input">
+                    <button class="submit-btn" id="submitBtn">Проверить решение</button>
+                </div>
+
+                <div class="response-section">
+                    <div class="section-title">Обратная связь</div>
+                    <div class="response-content" id="llmResponse">
+                        Здесь появится ответ системы после проверки
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-panel">
+            <button class="nav-btn secondary" onclick="window.location.href='index.html'">← К выбору задания</button>
+            <button class="nav-btn secondary" onclick="window.location.href='tags.html'">← Вернуться к тегам</button>
+            <button class="nav-btn" id="nextTaskBtn">Следующая задача →</button>
+            <button class="nav-btn exam" onclick="window.location.href='exam.html'">Перейти к реальному ЕГЭ</button>
+        </div>
     </div>
 
-    <div class="main-content">
-      <div class="theory-section">
-        <div class="section-title">Теория</div>
-        <div class="theory-content" id="theoryContent">
-          <!-- Теория будет загружаться динамически -->
-        </div>
-      </div>
-
-      <div class="practice-section">
-        <div class="section-title">Практика</div>
-        
-        <div class="task-description" id="taskDescription">
-          <!-- Условие задачи -->
-        </div>
-
-        <div class="code-editor">
-          <div class="editor-header">
-            <span>Редактор кода (Python)</span>
-            <button class="upload-btn small" id="uploadCodeBtn">
-              📁 Загрузить код
-            </button>
-          </div>
-          <textarea id="codeInput" placeholder="Введите ваш код здесь..."></textarea>
-        </div>
-
-        <div class="answer-section">
-          <input 
-            type="text" 
-            id="answerInput" 
-            placeholder="Введите ответ (если требуется)..."
-            class="answer-input"
-          >
-          <button class="submit-btn" id="submitBtn">
-            Проверить решение
-          </button>
-        </div>
-
-        <div class="response-section">
-          <div class="section-title">Обратная связь</div>
-          <div class="response-content" id="llmResponse">
-            Здесь появится ответ системы после проверки
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="bottom-panel">
-      <button class="nav-btn secondary" onclick="window.location.href='index.html'">
-        ← К выбору задания
-      </button>
-      <button class="nav-btn secondary" onclick="window.location.href='tags.html'">
-        ← Вернуться к тегам
-      </button>
-      <button class="nav-btn" id="nextTaskBtn">
-        Следующая задача →
-      </button>
-      <button class="nav-btn exam" onclick="window.location.href='exam.html'">
-        Перейти к реальному ЕГЭ
-      </button>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const selectedTag = localStorage.getItem('selectedTag') || 'loops';
-      const selectedTagName = localStorage.getItem('selectedTagName') || 'Циклы';
-      const selectedTask = localStorage.getItem('selectedTask') || 5;
-      const currentTagElement = document.getElementById('currentTag');
-      
-      currentTagElement.textContent = selectedTagName;
-      
-      const tagData = {
-        'loops': {
-          name: 'Циклы',
-          theory: `
-            <h3>Циклы в Python</h3>
-            <p>Циклы позволяют выполнять блок кода несколько раз.</p>
+    <script src="data-loader.js"></script>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+    <script src="utils/formatter.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const currentTagName = document.getElementById('currentTagName');
+            const currentTaskNumber = document.getElementById('currentTaskNumber');
+            const theoryContent = document.getElementById('theoryContent');
+            const taskDescription = document.getElementById('taskDescription');
+            const practiceTitle = document.getElementById('practiceTitle');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const codeInput = document.getElementById('codeInput');
+            const answerInput = document.getElementById('answerInput');
+            const submitBtn = document.getElementById('submitBtn');
+            const nextTaskBtn = document.getElementById('nextTaskBtn');
+            const uploadCodeBtn = document.getElementById('uploadCodeBtn');
+            const llmResponse = document.getElementById('llmResponse');
             
-            <h4>Цикл for:</h4>
-            <pre><code>for i in range(5):
-    print(i)  # 0 1 2 3 4</code></pre>
+            let currentTag = null;
+            let currentTask = null;
+            let currentProblems = [];
+            let currentProblemIndex = 0;
+            let userProgress = {};
             
-            <h4>Цикл while:</h4>
-            <pre><code>i = 0
-while i < 5:
-    print(i)
-    i += 1</code></pre>
+            try {
+                const tagId = DataLoader.getCurrentTag();
+                const taskId = DataLoader.getCurrentTask();
+                
+                currentTag = await DataLoader.loadTag(tagId);
+                currentTask = await DataLoader.loadTask(taskId);
+                
+                currentTagName.textContent = currentTag.name;
+                currentTaskNumber.textContent = `Задание ${currentTask.number}`;
+                
+                theoryContent.innerHTML = Formatter.markdownToHtml(currentTag.theory);
+                
+                currentProblems = currentTag.problems || [];
+                
+                if (currentProblems.length === 0) {
+                    taskDescription.innerHTML = '<p class="error-message">Задачи для этого тега пока не добавлены.</p>';
+                    nextTaskBtn.disabled = true;
+                } else {
+                    userProgress = DataLoader.getUserProgress(tagId) || {
+                        completed: [],
+                        scores: {},
+                        currentIndex: 0
+                    };
+                    
+                    currentProblemIndex = userProgress.currentIndex || 0;
+                    updateProgress();
+                    loadProblem(currentProblemIndex);
+                }
+                
+                submitBtn.addEventListener('click', handleSubmit);
+                
+                nextTaskBtn.addEventListener('click', function() {
+                    if (currentProblemIndex < currentProblems.length - 1) {
+                        currentProblemIndex++;
+                        loadProblem(currentProblemIndex);
+                        userProgress.currentIndex = currentProblemIndex;
+                        DataLoader.saveUserProgress(tagId, userProgress);
+                        updateProgress();
+                    } else {
+                        llmResponse.innerHTML = `
+                            <div class="success-message">
+                                <h4>🎉 Поздравляем!</h4>
+                                <p>Вы завершили все задачи по теме "${currentTag.name}"!</p>
+                                <p>Теперь вы можете перейти к реальным задачам ЕГЭ.</p>
+                            </div>
+                        `;
+                    }
+                });
+                
+                uploadCodeBtn.addEventListener('click', function() {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.py,.txt';
+                    input.onchange = function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(event) {
+                                codeInput.value = event.target.result;
+                            };
+                            reader.readAsText(file);
+                        }
+                    };
+                    input.click();
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && e.key === 'Enter') {
+                        handleSubmit();
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                theoryContent.innerHTML = '<div class="error-message">Ошибка загрузки данных. Проверьте файлы в папке /data.</div>';
+            }
             
-            <h4>Практические советы:</h4>
-            <ul>
-              <li>Используйте range() для заданного количества итераций</li>
-              <li>Избегайте бесконечных циклов</li>
-              <li>Используйте break для досрочного выхода</li>
-            </ul>
-          `,
-          task: {
-            description: `
-              <h4>Задача: Сумма четных чисел</h4>
-              <p>Напишите программу, которая находит сумму всех четных чисел от 1 до N.</p>
-              <p><strong>Входные данные:</strong> целое число N</p>
-              <p><strong>Выходные данные:</strong> сумма четных чисел</p>
-              <p><strong>Пример:</strong></p>
-              <pre>Ввод: 10
-Вывод: 30  # 2 + 4 + 6 + 8 + 10 = 30</pre>
-            `,
-            answer: ''
-          }
-        },
-        'arrays': {
-          name: 'Массивы',
-          theory: `
-            <h3>Списки (массивы) в Python</h3>
-            <p>Списки - упорядоченные изменяемые коллекции.</p>
+            function loadProblem(index) {
+                if (index >= 0 && index < currentProblems.length) {
+                    const problem = currentProblems[index];
+                    practiceTitle.textContent = `Практика (Задача ${index + 1}/${currentProblems.length})`;
+                    taskDescription.innerHTML = Formatter.markdownToHtml(problem.description || 'Описание задачи не найдено.');
+                    codeInput.value = problem.startingCode || '';
+                    answerInput.value = '';
+                    llmResponse.textContent = 'Здесь появится ответ системы после проверки';
+                }
+            }
             
-            <h4>Основные операции:</h4>
-            <pre><code># Создание списка
-numbers = [1, 2, 3, 4, 5]
-
-# Доступ к элементам
-print(numbers[0])  # 1
-print(numbers[-1]) # 5
-
-# Изменение
-numbers[0] = 10
-
-# Добавление
-numbers.append(6)
-
-# Длина списка
-len(numbers)</code></pre>
-          `,
-          task: {
-            description: `
-              <h4>Задача: Обратный массив</h4>
-              <p>Напишите функцию, которая возвращает список в обратном порядке.</p>
-              <p><strong>Пример:</strong></p>
-              <pre>Ввод: [1, 2, 3, 4, 5]
-Вывод: [5, 4, 3, 2, 1]</pre>
-            `,
-            answer: ''
-          }
-        }
-      };
-      
-      document.getElementById('theoryContent').innerHTML = 
-        tagData[selectedTag]?.theory || '<p>Теория для этого тега пока не загружена</p>';
-      
-      document.getElementById('taskDescription').innerHTML = 
-        tagData[selectedTag]?.task.description || '<p>Задача не найдена</p>';
-      
-      const submitBtn = document.getElementById('submitBtn');
-      const nextTaskBtn = document.getElementById('nextTaskBtn');
-      
-      submitBtn.addEventListener('click', function() {
-        const code = document.getElementById('codeInput').value;
-        const answer = document.getElementById('answerInput').value;
-        
-        const response = `
-          ✅ Решение проверено!
-          
-          <strong>Анализ:</strong>
-          1. Синтаксис: ✓ Правильный
-          2. Логика: ✓ Соответствует задаче
-          3. Эффективность: ⚡ Хорошая
-          
-          <strong>Рекомендации:</strong>
-          - Можно оптимизировать, используя формулу суммы арифметической прогрессии
-          - Добавьте проверку на отрицательные числа
-          
-          <strong>Оценка: 8/10</strong>
-        `;
-        
-        document.getElementById('llmResponse').innerHTML = response;
-      });
-      
-      nextTaskBtn.addEventListener('click', function() {
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        const currentWidth = parseInt(progressFill.style.width);
-        const newWidth = Math.min(currentWidth + 10, 100);
-        
-        progressFill.style.width = `${newWidth}%`;
-        progressText.textContent = `${Math.floor(newWidth/10)}/10 задач`;
-        
-        alert('Следующая задача загружается...');
-      });
-      
-      const uploadCodeBtn = document.getElementById('uploadCodeBtn');
-      uploadCodeBtn.addEventListener('click', function() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.py';
-        input.onchange = function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              document.getElementById('codeInput').value = event.target.result;
-            };
-            reader.readAsText(file);
-          }
-        };
-        input.click();
-      });
-    });
-  </script>
+            async function handleSubmit() {
+                const code = codeInput.value.trim();
+                const answer = answerInput.value.trim();
+                const problem = currentProblems[currentProblemIndex];
+                
+                if (!code && !answer) {
+                    llmResponse.innerHTML = '<div class="warning-message">Пожалуйста, введите код или ответ.</div>';
+                    return;
+                }
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Проверяем...';
+                
+                try {
+                    const result = await API.checkSolution({
+                        code,
+                        answer,
+                        problemId: problem.id,
+                        tag: currentTag.id,
+                        taskNumber: currentTask.number
+                    });
+                    
+                    llmResponse.innerHTML = result.response;
+                    
+                    if (result.success) {
+                        if (!userProgress.completed.includes(problem.id)) {
+                            userProgress.completed.push(problem.id);
+                        }
+                        userProgress.scores[problem.id] = result.score || 0;
+                        DataLoader.saveUserProgress(currentTag.id, userProgress);
+                        updateProgress();
+                    }
+                    
+                } catch (error) {
+                    console.error('Ошибка проверки решения:', error);
+                    llmResponse.innerHTML = `
+                        <div class="error-message">
+                            <p>Ошибка при проверке решения. Пожалуйста, попробуйте снова.</p>
+                            <p><small>${error.message}</small></p>
+                        </div>
+                    `;
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Проверить решение';
+                }
+            }
+            
+            function updateProgress() {
+                const completedCount = userProgress.completed?.length || 0;
+                const totalCount = currentProblems.length;
+                const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+                
+                progressFill.style.width = `${progressPercent}%`;
+                progressText.textContent = `${completedCount}/${totalCount} задач`;
+            }
+        });
+    </script>
 </body>
 </html>

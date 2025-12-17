@@ -1,338 +1,349 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Режим реальных задач ЕГЭ</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Режим реальных задач ЕГЭ</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container exam-mode">
-    <div class="top-panel">
-      <div class="exam-task-info">
-        <span class="task-num">Задание 5</span>
-        <span class="task-type">ЕГЭ по информатике</span>
-        <span class="difficulty">Сложность: Средняя</span>
-      </div>
-      
-      <div class="exam-actions">
-        <button class="action-btn" id="hintBtn">💡 Подсказка</button>
-        <button class="action-btn" id="solutionBtn">🔧 Решение</button>
-        <button class="action-btn" id="statisticsBtn">📊 Статистика</button>
-        <button class="nav-btn secondary" onclick="window.location.href='tags.html'">
-          📚 К изучению тем
-        </button>
-        <button class="nav-btn secondary" onclick="window.location.href='index.html'">
-          ← Назад к выбору задания
-        </button>
-      </div>
+    <div class="container exam-mode">
+        <div class="top-panel">
+            <div class="exam-task-info" id="examTaskInfo">
+                <!-- Информация загружается динамически -->
+            </div>
+            
+            <div class="exam-actions">
+                <button class="action-btn" id="hintBtn">💡 Подсказка</button>
+                <button class="action-btn" id="solutionBtn">🔧 Решение</button>
+                <button class="action-btn" id="statisticsBtn">📊 Статистика</button>
+                <button class="nav-btn secondary" onclick="window.location.href='tags.html'">📚 К изучению тем</button>
+                <button class="nav-btn secondary" onclick="window.location.href='index.html'">← Назад к выбору задания</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="exam-left">
+                <div class="exam-tags-panel" id="examTags">
+                    <!-- Теги загружаются динамически -->
+                </div>
+                
+                <div class="task-content" id="taskContent">
+                    <!-- Условие загружается динамически -->
+                </div>
+                
+                <div class="code-section">
+                    <div class="code-header">
+                        <span>Ваше решение</span>
+                        <button class="upload-btn small" id="examUploadBtn">📁 Загрузить .py</button>
+                    </div>
+                    <textarea id="examCodeInput" placeholder="Введите решение на Python..." spellcheck="false"></textarea>
+                </div>
+            </div>
+
+            <div class="exam-right">
+                <div class="section-header">
+                    <h3>Проверка решения</h3>
+                    <div class="timer" id="timer">⏱️ 00:00</div>
+                </div>
+                
+                <div class="llm-response" id="examLlmResponse">
+                    <div class="placeholder">Решение будет проверено автоматически после отправки</div>
+                </div>
+                
+                <div class="answer-input-section">
+                    <input type="text" id="examAnswerInput" placeholder="Числовой ответ (если требуется)..." class="answer-input">
+                    <button class="submit-btn large" id="examSubmitBtn">Отправить на проверку</button>
+                </div>
+                
+                <div class="statistics" id="userStatistics">
+                    <!-- Статистика загружается динамически -->
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-bottom-panel">
+            <button class="nav-btn secondary" id="prevTaskBtn" disabled>← Предыдущая задача</button>
+            <div class="task-counter" id="taskCounter">Загрузка...</div>
+            <button class="nav-btn" id="nextExamTaskBtn">Следующая задача →</button>
+        </div>
     </div>
 
-    <div class="main-content">
-      <div class="exam-left">
-        <div class="exam-tags-panel" id="examTags">
-          <!-- Теги будут добавлены динамически -->
-        </div>
-        
-        <div class="task-content" id="taskContent">
-          <!-- Условие реальной задачи ЕГЭ -->
-        </div>
-        
-        <div class="code-section">
-          <div class="code-header">
-            <span>Ваше решение</span>
-            <button class="upload-btn small" id="examUploadBtn">
-              📁 Загрузить .py
-            </button>
-          </div>
-          <textarea id="examCodeInput" placeholder="Введите решение на Python..."></textarea>
-        </div>
-      </div>
-
-      <div class="exam-right">
-        <div class="section-header">
-          <h3>Проверка решения</h3>
-          <div class="timer" id="timer">⏱️ 00:00</div>
-        </div>
-        
-        <div class="llm-response" id="examLlmResponse">
-          <div class="placeholder">
-            Решение будет проверено автоматически после отправки
-          </div>
-        </div>
-        
-        <div class="answer-input-section">
-          <input 
-            type="text" 
-            id="examAnswerInput" 
-            placeholder="Числовой ответ (если требуется)..."
-            class="answer-input"
-          >
-          <button class="submit-btn large" id="examSubmitBtn">
-            Отправить на проверку
-          </button>
-        </div>
-        
-        <div class="statistics">
-          <h4>Ваша статистика:</h4>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <span class="stat-value">5</span>
-              <span class="stat-label">решено</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">80%</span>
-              <span class="stat-label">точность</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-value">12:34</span>
-              <span class="stat-label">среднее время</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="exam-bottom-panel">
-      <button class="nav-btn secondary" id="prevTaskBtn" disabled>
-        ← Предыдущая задача
-      </button>
-      
-      <div class="task-counter">
-        Задача <span id="currentTaskNum">5</span> из 27
-      </div>
-      
-      <button class="nav-btn" id="nextExamTaskBtn">
-        Следующая задача →
-      </button>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const selectedTask = localStorage.getItem('selectedTask') || 5;
-      document.getElementById('currentTaskNum').textContent = selectedTask;
-      
-      const examTasks = {
-        5: {
-          title: "Анализ алгоритмов",
-          difficulty: "Средняя",
-          content: `
-            <h3>Задание 5 ЕГЭ по информатике</h3>
-            <p><strong>Условие:</strong></p>
-            <p>На вход алгоритма подаётся натуральное число N. Алгоритм строит по нему новое число R следующим образом:</p>
-            <ol>
-              <li>Строится двоичная запись числа N.</li>
-              <li>К этой записи дописываются справа ещё два разряда по следующему правилу:
-                <ul>
-                  <li>Складываются все цифры двоичной записи, и остаток от деления суммы на 2 дописывается в конец числа (справа).</li>
-                  <li>Над этой записью производятся те же действия – справа дописывается остаток от деления суммы цифр на 2.</li>
-                </ul>
-              </li>
-            </ol>
-            <p>Полученная таким образом запись (в ней на два разряда больше, чем в записи исходного числа N) является двоичной записью искомого числа R.</p>
+    <script src="data-loader.js"></script>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+    <script src="utils/formatter.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const examTaskInfo = document.getElementById('examTaskInfo');
+            const examTags = document.getElementById('examTags');
+            const taskContent = document.getElementById('taskContent');
+            const timerElement = document.getElementById('timer');
+            const examCodeInput = document.getElementById('examCodeInput');
+            const examAnswerInput = document.getElementById('examAnswerInput');
+            const examSubmitBtn = document.getElementById('examSubmitBtn');
+            const examUploadBtn = document.getElementById('examUploadBtn');
+            const examLlmResponse = document.getElementById('examLlmResponse');
+            const userStatistics = document.getElementById('userStatistics');
+            const prevTaskBtn = document.getElementById('prevTaskBtn');
+            const nextExamTaskBtn = document.getElementById('nextExamTaskBtn');
+            const taskCounter = document.getElementById('taskCounter');
+            const hintBtn = document.getElementById('hintBtn');
+            const solutionBtn = document.getElementById('solutionBtn');
+            const statisticsBtn = document.getElementById('statisticsBtn');
             
-            <p><strong>Пример:</strong></p>
-            <pre>Дано число N = 13. Алгоритм работает следующим образом:
-1. Двоичная запись 13: 1101
-2. Сумма цифр: 1+1+0+1 = 3, остаток 3 mod 2 = 1 → 11011
-3. Сумма цифр: 1+1+0+1+1 = 4, остаток 4 mod 2 = 0 → 110110
-4. Результат: 110110₂ = 54</pre>
+            let currentTaskNumber = null;
+            let currentExamTask = null;
+            let availableTasks = [];
+            let currentTaskIndex = 0;
+            let timerSeconds = 0;
+            let timerInterval = null;
             
-            <p><strong>Задание:</strong></p>
-            <p>Укажите минимальное число N, для которого результат работы алгоритма больше 75. В ответе запишите это число в десятичной системе счисления.</p>
-          `,
-          answer: "84",
-          tags: ["Двоичная система", "Алгоритмы", "Остатки", "Циклы", "Функции"]
-        }
-      };
-      
-      const currentTask = examTasks[selectedTask];
-      if (currentTask) {
-        document.getElementById('taskContent').innerHTML = currentTask.content;
-        
-        const examTags = document.getElementById('examTags');
-        currentTask.tags.forEach(tag => {
-          const tagElement = document.createElement('span');
-          tagElement.className = 'exam-tag';
-          tagElement.textContent = tag;
-          tagElement.addEventListener('click', function() {
-            localStorage.setItem('selectedTag', tag.toLowerCase());
+            try {
+                const config = await DataLoader.loadConfig();
+                currentTaskNumber = DataLoader.getCurrentTask();
+                availableTasks = config.availableTasks || [5];
+                
+                currentTaskIndex = availableTasks.indexOf(currentTaskNumber);
+                if (currentTaskIndex === -1) {
+                    currentTaskIndex = 0;
+                    currentTaskNumber = availableTasks[0];
+                }
+                
+                await loadExamTask(currentTaskNumber);
+                startTimer();
+                loadStatistics();
+                updateNavigationButtons();
+                
+                examSubmitBtn.addEventListener('click', handleExamSubmit);
+                
+                examUploadBtn.addEventListener('click', function() {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.py,.txt';
+                    input.onchange = function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(event) {
+                                examCodeInput.value = event.target.result;
+                            };
+                            reader.readAsText(file);
+                        }
+                    };
+                    input.click();
+                });
+                
+                prevTaskBtn.addEventListener('click', function() {
+                    if (currentTaskIndex > 0) {
+                        currentTaskIndex--;
+                        currentTaskNumber = availableTasks[currentTaskIndex];
+                        DataLoader.setCurrentTask(currentTaskNumber);
+                        loadExamTask(currentTaskNumber);
+                        updateNavigationButtons();
+                    }
+                });
+                
+                nextExamTaskBtn.addEventListener('click', function() {
+                    if (currentTaskIndex < availableTasks.length - 1) {
+                        currentTaskIndex++;
+                        currentTaskNumber = availableTasks[currentTaskIndex];
+                        DataLoader.setCurrentTask(currentTaskNumber);
+                        loadExamTask(currentTaskNumber);
+                        updateNavigationButtons();
+                    }
+                });
+                
+                hintBtn.addEventListener('click', async function() {
+                    try {
+                        const hint = await API.getHint(currentTaskNumber);
+                        examLlmResponse.innerHTML = `
+                            <div class="hint-content">
+                                <h4>💡 Подсказка:</h4>
+                                <p>${hint}</p>
+                            </div>
+                        `;
+                    } catch (error) {
+                        console.error('Ошибка получения подсказки:', error);
+                    }
+                });
+                
+                solutionBtn.addEventListener('click', async function() {
+                    try {
+                        const solution = await API.getSolution(currentTaskNumber);
+                        examLlmResponse.innerHTML = `
+                            <div class="solution-content">
+                                <h4>🔧 Решение:</h4>
+                                <pre><code>${solution.code}</code></pre>
+                                <p><strong>Ответ: ${solution.answer}</strong></p>
+                            </div>
+                        `;
+                    } catch (error) {
+                        console.error('Ошибка получения решения:', error);
+                    }
+                });
+                
+                statisticsBtn.addEventListener('click', loadStatistics);
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && e.key === 'Enter') {
+                        handleExamSubmit();
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Ошибка инициализации:', error);
+                taskContent.innerHTML = '<div class="error-message">Ошибка загрузки задания. Проверьте файлы в папке /data.</div>';
+            }
             
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.innerHTML = `Переходим к изучению темы: <strong>${tag}</strong>`;
-            document.querySelector('.exam-left').prepend(notification);
+            async function loadExamTask(taskNumber) {
+                try {
+                    currentExamTask = await DataLoader.loadExamTask(taskNumber);
+                    
+                    examTaskInfo.innerHTML = `
+                        <span class="task-num">Задание ${currentExamTask.number}</span>
+                        <span class="task-type">${currentExamTask.title}</span>
+                        <span class="difficulty">Сложность: ${currentExamTask.difficulty}</span>
+                    `;
+                    
+                    taskContent.innerHTML = Formatter.markdownToHtml(currentExamTask.content || 'Содержание задачи не найдено.');
+                    
+                    examTags.innerHTML = '';
+                    (currentExamTask.tags || []).forEach(tag => {
+                        const tagElement = document.createElement('span');
+                        tagElement.className = 'exam-tag';
+                        tagElement.textContent = tag;
+                        tagElement.addEventListener('click', async function() {
+                            try {
+                                const tagData = await DataLoader.loadTag(tag.toLowerCase());
+                                DataLoader.setCurrentTag(tagData.id);
+                                window.location.href = 'study.html';
+                            } catch (error) {
+                                console.error('Ошибка загрузки тега:', error);
+                            }
+                        });
+                        examTags.appendChild(tagElement);
+                    });
+                    
+                    examCodeInput.value = currentExamTask.startingCode || '';
+                    examAnswerInput.value = '';
+                    examLlmResponse.innerHTML = '<div class="placeholder">Решение будет проверено автоматически после отправки</div>';
+                    
+                    taskCounter.innerHTML = `Задача <span id="currentTaskNum">${currentExamTask.number}</span> из 27`;
+                    
+                    resetTimer();
+                    
+                } catch (error) {
+                    console.error('Ошибка загрузки экзаменационного задания:', error);
+                    throw error;
+                }
+            }
             
-            setTimeout(() => {
-              window.location.href = 'study.html';
-            }, 2000);
-          });
-          examTags.appendChild(tagElement);
+            function startTimer() {
+                if (timerInterval) clearInterval(timerInterval);
+                
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    const minutes = Math.floor(timerSeconds / 60);
+                    const seconds = timerSeconds % 60;
+                    timerElement.textContent = `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+            
+            function resetTimer() {
+                timerSeconds = 0;
+                timerElement.textContent = '⏱️ 00:00';
+            }
+            
+            function updateNavigationButtons() {
+                prevTaskBtn.disabled = currentTaskIndex === 0;
+                nextExamTaskBtn.disabled = currentTaskIndex === availableTasks.length - 1;
+            }
+            
+            async function handleExamSubmit() {
+                const code = examCodeInput.value.trim();
+                const answer = examAnswerInput.value.trim();
+                
+                if (!code && !answer) {
+                    examLlmResponse.innerHTML = '<div class="warning-message">Пожалуйста, введите код или ответ.</div>';
+                    return;
+                }
+                
+                examSubmitBtn.disabled = true;
+                examSubmitBtn.textContent = 'Проверяем...';
+                
+                try {
+                    const result = await API.checkExamSolution({
+                        taskNumber: currentTaskNumber,
+                        code,
+                        answer,
+                        timeSpent: timerSeconds
+                    });
+                    
+                    examLlmResponse.innerHTML = result.response;
+                    
+                    if (result.success) {
+                        DataLoader.saveExamResult(currentTaskNumber, {
+                            success: true,
+                            score: result.score || 0,
+                            timeSpent: timerSeconds,
+                            timestamp: new Date().toISOString()
+                        });
+                        
+                        loadStatistics();
+                    }
+                    
+                } catch (error) {
+                    console.error('Ошибка проверки:', error);
+                    examLlmResponse.innerHTML = `
+                        <div class="error-message">
+                            <p>Ошибка при проверке решения. Пожалуйста, попробуйте снова.</p>
+                        </div>
+                    `;
+                } finally {
+                    examSubmitBtn.disabled = false;
+                    examSubmitBtn.textContent = 'Отправить на проверку';
+                }
+            }
+            
+            async function loadStatistics() {
+                try {
+                    const stats = await DataLoader.getUserStatistics();
+                    
+                    userStatistics.innerHTML = `
+                        <h4>📊 Ваша статистика:</h4>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-value">${stats.completedTasks}</span>
+                                <span class="stat-label">решено</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">${stats.accuracy}%</span>
+                                <span class="stat-label">точность</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">${stats.averageTime}</span>
+                                <span class="stat-label">среднее время</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value">${stats.totalScore}</span>
+                                <span class="stat-label">общий балл</span>
+                            </div>
+                        </div>
+                        <div class="progress-summary">
+                            <p>Прогресс: ${stats.progress}% заданий изучено</p>
+                            <div class="chart-bar">
+                                <div class="chart-fill" style="width: ${stats.progress}%"></div>
+                            </div>
+                        </div>
+                    `;
+                    
+                } catch (error) {
+                    console.error('Ошибка загрузки статистики:', error);
+                    userStatistics.innerHTML = '<p>Не удалось загрузить статистику</p>';
+                }
+            }
         });
-      }
-      
-      let seconds = 0;
-      const timerElement = document.getElementById('timer');
-      setInterval(() => {
-        seconds++;
-        const minutes = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        timerElement.textContent = `⏱️ ${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      }, 1000);
-      
-      const hintBtn = document.getElementById('hintBtn');
-      const solutionBtn = document.getElementById('solutionBtn');
-      const statisticsBtn = document.getElementById('statisticsBtn');
-      const submitBtn = document.getElementById('examSubmitBtn');
-      const nextBtn = document.getElementById('nextExamTaskBtn');
-      
-      hintBtn.addEventListener('click', function() {
-        const response = document.getElementById('examLlmResponse');
-        response.innerHTML = `
-          <div class="hint-content">
-            <h4>💡 Подсказка:</h4>
-            <p>1. Внимательно прочитайте алгоритм преобразования числа</p>
-            <p>2. Начните с небольших чисел N и проверяйте результат R</p>
-            <p>3. Обратите внимание на сумму цифр двоичного представления</p>
-            <p>4. Используйте цикл для перебора возможных значений N</p>
-          </div>
-        `;
-      });
-      
-      solutionBtn.addEventListener('click', function() {
-        const response = document.getElementById('examLlmResponse');
-        response.innerHTML = `
-          <div class="solution-content">
-            <h4>🔧 Решение:</h4>
-            <pre><code>def algorithm(N):
-    # Шаг 1: двоичное представление
-    binary = bin(N)[2:]
-    
-    # Шаг 2: два раза добавляем остаток
-    for _ in range(2):
-        s = sum(int(digit) for digit in binary)
-        binary += str(s % 2)
-    
-    # Преобразуем обратно в десятичное
-    return int(binary, 2)
-
-# Поиск минимального N
-for N in range(1, 100):
-    R = algorithm(N)
-    if R > 75:
-        print(f"N = {N}, R = {R}")
-        break</code></pre>
-            <p><strong>Ответ: 84</strong></p>
-          </div>
-        `;
-      });
-      
-      statisticsBtn.addEventListener('click', function() {
-        const progress = JSON.parse(localStorage.getItem('userProgress') || '{}');
-        const totalTasks = 27;
-        const completedTasks = Object.keys(progress).length;
-        const accuracy = completedTasks > 0 ? 
-          Math.round((Object.values(progress).filter(p => p.score > 7).length / completedTasks) * 100) : 0;
-        
-        const response = document.getElementById('examLlmResponse');
-        response.innerHTML = `
-          <div class="statistics-content">
-            <h4>📊 Ваша статистика</h4>
-            
-            <div class="stats-overview">
-              <div class="stat-row">
-                <span class="stat-label">Всего заданий:</span>
-                <span class="stat-value">${totalTasks}</span>
-              </div>
-              <div class="stat-row">
-                <span class="stat-label">Выполнено:</span>
-                <span class="stat-value">${completedTasks}</span>
-              </div>
-              <div class="stat-row">
-                <span class="stat-label">Точность:</span>
-                <span class="stat-value">${accuracy}%</span>
-              </div>
-              <div class="stat-row">
-                <span class="stat-label">Средний балл:</span>
-                <span class="stat-value">${completedTasks > 0 ? 
-                  (Object.values(progress).reduce((sum, p) => sum + p.score, 0) / completedTasks).toFixed(1) : '0'}/10</span>
-              </div>
-            </div>
-            
-            <div class="progress-chart">
-              <h5>Прогресс по заданиям:</h5>
-              <div class="chart-bar">
-                <div class="chart-fill" style="width: ${(completedTasks / totalTasks) * 100}%"></div>
-              </div>
-              <div class="chart-labels">
-                <span>${completedTasks} выполнено</span>
-                <span>${totalTasks - completedTasks} осталось</span>
-              </div>
-            </div>
-            
-            <div class="recommendations">
-              <h5>🎯 Рекомендации:</h5>
-              <ul>
-                <li>Сосредоточьтесь на заданиях 5-8 для набора базовых баллов</li>
-                <li>Решайте больше задач на алгоритмы (задания 12, 17, 24)</li>
-                <li>Тренируйтесь в режиме реального времени</li>
-              </ul>
-            </div>
-          </div>
-        `;
-      });
-      
-      submitBtn.addEventListener('click', function() {
-        const code = document.getElementById('examCodeInput').value;
-        const answer = document.getElementById('examAnswerInput').value;
-        
-        const response = `
-          <div class="verdict-content">
-            <h4>✅ Проверка завершена!</h4>
-            
-            <div class="verdict-details">
-              <p><strong>Корректность:</strong> ${answer === currentTask.answer ? '✓ Правильно' : '✗ Неправильно'}</p>
-              <p><strong>Время решения:</strong> ${Math.floor(seconds/60)}:${(seconds%60).toString().padStart(2, '0')}</p>
-              <p><strong>Оценка алгоритма:</strong> ${answer === currentTask.answer ? 'Принято' : 'Требует доработки'}</p>
-            </div>
-            
-            <div class="recommendations">
-              <h5>Рекомендации:</h5>
-              <ul>
-                <li>Проверьте обработку граничных случаев</li>
-                <li>Убедитесь в эффективности алгоритма</li>
-                <li>Протестируйте на нескольких примерах</li>
-              </ul>
-            </div>
-          </div>
-        `;
-        
-        document.getElementById('examLlmResponse').innerHTML = response;
-      });
-      
-      nextBtn.addEventListener('click', function() {
-        alert('Следующее задание пока недоступно. Продолжайте тренироваться на текущем!');
-      });
-      
-      document.getElementById('examUploadBtn').addEventListener('click', function() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.py';
-        input.onchange = function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              document.getElementById('examCodeInput').value = event.target.result;
-            };
-            reader.readAsText(file);
-          }
-        };
-        input.click();
-      });
-    });
-  </script>
+    </script>
 </body>
 </html>

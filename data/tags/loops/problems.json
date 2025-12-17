@@ -1,0 +1,68 @@
+[
+    {
+      "id": "loops_1",
+      "title": "Сумма четных чисел",
+      "description": "Напишите программу, которая находит сумму всех четных чисел от 2 до N.\n\n**Входные данные:** целое число N\n**Выходные данные:** сумма четных чисел\n\n**Пример:**\nВвод: 10\nВывод: 30  # 2 + 4 + 6 + 8 + 10 = 30",
+      "difficulty": "легкая",
+      "points": 1,
+      "timeLimit": 60,
+      "startingCode": "def sum_even_numbers(n):\n    # Ваш код здесь\n    pass",
+      "testCases": [
+        {
+          "input": "10",
+          "expectedOutput": "30"
+        },
+        {
+          "input": "5",
+          "expectedOutput": "6"
+        },
+        {
+          "input": "0",
+          "expectedOutput": "0"
+        },
+        {
+          "input": "1",
+          "expectedOutput": "0"
+        }
+      ],
+      "hints": [
+        "Используйте цикл for для перебора чисел",
+        "Проверяйте каждое число на четность с помощью оператора %",
+        "Не забудьте случай, когда N меньше 2"
+      ],
+      "tags": ["loops", "conditionals", "basics"]
+    },
+    {
+      "id": "loops_2",
+      "title": "Факториал числа",
+      "description": "Напишите функцию для вычисления факториала числа N.\n\n**Формула:** N! = 1 × 2 × 3 × ... × N\n**Особый случай:** 0! = 1\n\n**Пример:**\nВвод: 5\nВывод: 120",
+      "difficulty": "легкая",
+      "points": 1,
+      "timeLimit": 60,
+      "startingCode": "def factorial(n):\n    # Ваш код здесь\n    pass",
+      "testCases": [
+        {
+          "input": "5",
+          "expectedOutput": "120"
+        },
+        {
+          "input": "0",
+          "expectedOutput": "1"
+        },
+        {
+          "input": "1",
+          "expectedOutput": "1"
+        },
+        {
+          "input": "7",
+          "expectedOutput": "5040"
+        }
+      ],
+      "hints": [
+        "Начните с result = 1",
+        "Используйте цикл для умножения чисел от 1 до N",
+        "Учтите случай N = 0"
+      ],
+      "tags": ["loops", "functions", "recursion"]
+    }
+  ]
