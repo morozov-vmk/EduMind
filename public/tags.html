@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Навыки для задания</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <h1 id="pageTitle">Загрузка задания...</h1>
+            <p class="subtitle" id="pageSubtitle">Выберите тему для изучения</p>
+        </header>
+
+        <div class="tags-container" id="tagsContainer">
+        </div>
+
+        <div class="controls">
+            <button class="nav-btn secondary" onclick="window.location.href='index.html'">
+                ← Назад к выбору задания
+            </button>
+            <button class="nav-btn" id="toRealTaskBtn">
+                Перейти к реальной задаче →
+            </button>
+        </div>
+
+        <div class="description" id="taskDescription">
+        </div>
+    </div>
+
+    <script src="data-loader.js"></script>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const currentTaskNumber = DataLoader.getCurrentTask();
+                const task = await DataLoader.loadTask(currentTaskNumber);
+                const config = await DataLoader.loadConfig();
+                
+                document.getElementById('pageTitle').textContent = `Навыки для задания ${task.number}`;
+                document.getElementById('pageSubtitle').textContent = task.title;
+                
+                const tagsContainer = document.getElementById('tagsContainer');
+                const taskDescription = document.getElementById('taskDescription');
+                const toRealTaskBtn = document.getElementById('toRealTaskBtn');
+                
+                tagsContainer.innerHTML = '';
+                
+                if (task.tags && task.tags.length > 0) {
+                    for (const tagId of task.tags) {
+                        const tagData = await DataLoader.loadTag(tagId);
+                        
+                        const tagCard = document.createElement('div');
+                        tagCard.className = 'tag-card';
+                        tagCard.style.borderLeft = `5px solid ${tagData.color || '#3498db'}`;
+                        tagCard.innerHTML = `
+                            <h3>${tagData.name}</h3>
+                            <p>${tagData.description || 'Изучите теорию и практикуйтесь'}</p>
+                            <div class="progress-indicator">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${tagData.progress || 0}%"></div>
+                                </div>
+                                <span>${tagData.progress || 0}% изучено</span>
+                            </div>
+                            <button class="study-btn" data-tag="${tagId}">Изучить</button>
+                        `;
+                        
+                        tagCard.querySelector('.study-btn').addEventListener('click', function() {
+                            DataLoader.setCurrentTag(tagId);
+                            window.location.href = 'study.html';
+                        });
+                        
+                        tagsContainer.appendChild(tagCard);
+                    }
+                } else {
+                    tagsContainer.innerHTML = '<p class="error-message">Теги для этого задания не найдены.</p>';
+                }
+                
+                taskDescription.innerHTML = `
+                    <h3>Как работать с системой:</h3>
+                    <ol>
+                        <li>Выберите тему для изучения (всего ${task.tags?.length || 0} тем)</li>
+                        <li>Изучите теорию по этой теме</li>
+                        <li>Решите тренировочные задачи</li>
+                        <li>Пройдите тестирование по теме</li>
+                        <li>Перейдите к реальной задаче ЕГЭ</li>
+                    </ol>
+                    <div class="task-details">
+                        <p><strong>Сложность:</strong> ${task.difficulty || 'Не указана'}</p>
+                        <p><strong>Тип:</strong> ${task.type || 'Теория и практика'}</p>
+                        <p><strong>Рекомендуемое время:</strong> ${task.recommendedTime || '30-40 минут'}</p>
+                        <p><strong>Баллы:</strong> ${task.points || 1}</p>
+                    </div>
+                `;
+                
+                toRealTaskBtn.addEventListener('click', function() {
+                    window.location.href = 'exam.html';
+                });
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                document.getElementById('tagsContainer').innerHTML = 
+                    '<div class="error-message">Ошибка загрузки тегов. Проверьте данные в папке /data.</div>';
+            }
+        });
+    </script>
+</body>
+</html>

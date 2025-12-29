@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Режим реальных задач ЕГЭ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container exam-mode">
+        <div class="top-panel">
+            <div class="exam-task-info" id="examTaskInfo">
+            </div>
+            
+            <div class="exam-actions">
+                <button class="action-btn" id="hintBtn">💡 Подсказка</button>
+                <button class="action-btn" id="solutionBtn">🔧 Решение</button>
+                <button class="action-btn" id="statisticsBtn">📊 Статистика</button>
+                <button class="nav-btn secondary" onclick="window.location.href='tags.html'">📚 К изучению тем</button>
+                <button class="nav-btn secondary" onclick="window.location.href='index.html'">← Назад к выбору задания</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="exam-left">
+                <div class="exam-tags-panel" id="examTags">
+                </div>
+                
+                <div class="task-content" id="taskContent">
+                </div>
+                
+                <div class="code-section">
+                    <div class="code-header">
+                        <span>Ваше решение</span>
+                        <button class="upload-btn small" id="examUploadBtn">📁 Загрузить .py</button>
+                    </div>
+                    <textarea id="examCodeInput" placeholder="Введите решение на Python..." spellcheck="false"></textarea>
+                </div>
+            </div>
+
+            <div class="exam-right">
+                <div class="section-header">
+                    <h3>Проверка решения</h3>
+                    <div class="timer" id="timer">⏱️ 00:00</div>
+                </div>
+                
+                <div class="llm-response" id="examLlmResponse">
+                    <div class="placeholder">Решение будет проверено автоматически после отправки</div>
+                </div>
+                
+                <div class="answer-input-section">
+                    <input type="text" id="examAnswerInput" placeholder="Числовой ответ (если требуется)..." class="answer-input">
+                    <button class="submit-btn large" id="examSubmitBtn">Отправить на проверку</button>
+                </div>
+                
+                <div class="statistics" id="userStatistics">
+                </div>
+            </div>
+        </div>
+
+        <div class="exam-bottom-panel">
+            <button class="nav-btn secondary" id="prevTaskBtn" disabled>← Предыдущая задача</button>
+            <div class="task-counter" id="taskCounter">Загрузка...</div>
+            <button class="nav-btn" id="nextExamTaskBtn">Следующая задача →</button>
+        </div>
+    </div>
+
+    <script src="data-loader.js"></script>
+<script src="api.js"></script>
+<script src="main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
+
+<script src="utils/formatter.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        const examTaskInfo = document.getElementById('examTaskInfo');
+        const examTags = document.getElementById('examTags');
+        const taskContent = document.getElementById('taskContent');
+        const timerElement = document.getElementById('timer');
+        const examCodeInput = document.getElementById('examCodeInput');
+        const examAnswerInput = document.getElementById('examAnswerInput');
+        const examSubmitBtn = document.getElementById('examSubmitBtn');
+        const examUploadBtn = document.getElementById('examUploadBtn');
+        const examLlmResponse = document.getElementById('examLlmResponse');
+        const userStatistics = document.getElementById('userStatistics');
+        const prevTaskBtn = document.getElementById('prevTaskBtn');
+        const nextExamTaskBtn = document.getElementById('nextExamTaskBtn');
+        const taskCounter = document.getElementById('taskCounter');
+        const hintBtn = document.getElementById('hintBtn');
+        const solutionBtn = document.getElementById('solutionBtn');
+        const statisticsBtn = document.getElementById('statisticsBtn');
+        
+        let currentTaskNumber = null;
+        let currentExamData = null;    
+        let currentSubTasks = null;     
+        let currentSubIndex = 0;             
+        let availableTasks = [];
+        let currentTaskIndex = 0;             
+        let timerSeconds = 0;
+        let timerInterval = null;
+        
+        try {
+            const config = await DataLoader.loadConfig();
+            currentTaskNumber = DataLoader.getCurrentTask();
+            availableTasks = config.availableTasks || [5];
+            
+            currentTaskIndex = availableTasks.indexOf(currentTaskNumber);
+            if (currentTaskIndex === -1) {
+                currentTaskIndex = 0;
+                currentTaskNumber = availableTasks[0];
+            }
+            
+            await loadExamTask(currentTaskNumber);
+            startTimer();
+            loadStatistics();
+            updateNavigationButtons();
+            
+            examSubmitBtn.addEventListener('click', handleExamSubmit);
+            
+            examUploadBtn.addEventListener('click', function() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.py,.txt';
+                input.onchange = function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            examCodeInput.value = event.target.result;
+                        };
+                        reader.readAsText(file);
+                    }
+                };
+                input.click();
+            });
+            
+            prevTaskBtn.addEventListener('click', async function() {
+                if (currentSubTasks && currentSubIndex > 0) {
+                    currentSubIndex--;
+                    renderCurrentSubtask();
+                    updateNavigationButtons();
+                    return;
+                }
+                
+                if (currentTaskIndex > 0) {
+                    currentTaskIndex--;
+                    currentTaskNumber = availableTasks[currentTaskIndex];
+                    DataLoader.setCurrentTask(currentTaskNumber);
+                    await loadExamTask(currentTaskNumber);
+                    updateNavigationButtons();
+                }
+            });
+            
+            nextExamTaskBtn.addEventListener('click', async function() {
+                if (currentSubTasks && currentSubIndex < currentSubTasks.length - 1) {
+                    currentSubIndex++;
+                    renderCurrentSubtask();
+                    updateNavigationButtons();
+                    return;
+                }
+                
+                if (currentTaskIndex < availableTasks.length - 1) {
+                    currentTaskIndex++;
+                    currentTaskNumber = availableTasks[currentTaskIndex];
+                    DataLoader.setCurrentTask(currentTaskNumber);
+                    await loadExamTask(currentTaskNumber);
+                    updateNavigationButtons();
+                }
+            });
+            
+            hintBtn.addEventListener('click', async function() {
+                try {
+                    const hint = await API.getHint(currentTaskNumber);
+                    examLlmResponse.innerHTML = `
+                        <div class="hint-content">
+                            <h4>💡 Подсказка:</h4>
+                            <p>${hint}</p>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Ошибка получения подсказки:', error);
+                }
+            });
+            
+            solutionBtn.addEventListener('click', async function() {
+                try {
+                    const solution = await API.getSolution(currentTaskNumber);
+                    examLlmResponse.innerHTML = `
+                        <div class="solution-content">
+                            <h4>🔧 Решение:</h4>
+                            <pre><code>${solution.code}</code></pre>
+                            <p><strong>Ответ: ${solution.answer}</strong></p>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Ошибка получения решения:', error);
+                }
+            });
+            
+            statisticsBtn.addEventListener('click', loadStatistics);
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    handleExamSubmit();
+                }
+            });
+            
+        } catch (error) {
+            console.error('Ошибка инициализации:', error);
+            taskContent.innerHTML = '<div class="error-message">Ошибка загрузки задания. Проверьте файлы в папке /data.</div>';
+        }
+        
+        async function loadExamTask(taskNumber) {
+            try {
+                currentExamData = await DataLoader.loadExamTask(taskNumber);
+                
+                if (currentExamData && Array.isArray(currentExamData.tasks)) {
+                    currentSubTasks = currentExamData.tasks;
+                    currentSubIndex = 0;
+                    renderCurrentSubtask();
+                } else {
+                    currentSubTasks = null;
+                    currentSubIndex = 0;
+                    renderSingleTask(currentExamData);
+                }
+                
+                renderTags();
+                
+                resetTimer();
+                
+            } catch (error) {
+                console.error('Ошибка загрузки экзаменационного задания:', error);
+                throw error;
+            }
+        }
+        
+        function renderTags() {
+            examTags.innerHTML = '';
+            const tagsSource = (currentSubTasks && currentSubTasks[currentSubIndex] && currentSubTasks[currentSubIndex].tags)
+                || (currentExamData && currentExamData.tags)
+                || [];
+            (tagsSource || []).forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'exam-tag';
+                tagElement.textContent = tag;
+                tagElement.addEventListener('click', async function() {
+                    try {
+                        const tagData = await DataLoader.loadTag(tag.toLowerCase());
+                        DataLoader.setCurrentTag(tagData.id);
+                        window.location.href = 'study.html';
+                    } catch (error) {
+                        console.error('Ошибка загрузки тега:', error);
+                    }
+                });
+                examTags.appendChild(tagElement);
+            });
+        }
+        
+        function renderCurrentSubtask() {
+            const sub = currentSubTasks[currentSubIndex];
+
+            examTaskInfo.innerHTML = `
+                <span class="task-num">Задание ${currentExamData.number} (вариант ${sub.subNumber || (currentSubIndex + 1)})</span>
+                <span class="task-type">${sub.title || currentExamData.title}</span>
+                <span class="difficulty">Сложность: ${sub.difficulty || currentExamData.difficulty || 'Не определена'}</span>
+            `;
+            
+            taskContent.innerHTML = Formatter.markdownToHtml(sub.content || currentExamData.content || 'Содержание задачи не найдено.');
+            
+            examCodeInput.value = sub.startingCode || sub.startCode || currentExamData.startingCode || '';
+            examAnswerInput.value = '';
+            examLlmResponse.innerHTML = '<div class="placeholder">Решение будет проверено автоматически после отправки</div>';
+            
+            taskCounter.innerHTML = `Задача <span id="currentTaskNum">${currentSubIndex + 1}</span> из ${currentSubTasks.length}`;
+        }
+        
+        function renderSingleTask(taskObj) {
+            examTaskInfo.innerHTML = `
+                <span class="task-num">Задание ${taskObj.number}</span>
+                <span class="task-type">${taskObj.title}</span>
+                <span class="difficulty">Сложность: ${taskObj.difficulty}</span>
+            `;
+            
+            taskContent.innerHTML = Formatter.markdownToHtml(taskObj.content || 'Содержание задачи не найдено.');
+            
+            examTags.innerHTML = '';
+            (taskObj.tags || []).forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'exam-tag';
+                tagElement.textContent = tag;
+                tagElement.addEventListener('click', async function() {
+                    try {
+                        const tagData = await DataLoader.loadTag(tag.toLowerCase());
+                        DataLoader.setCurrentTag(tagData.id);
+                        window.location.href = 'study.html';
+                    } catch (error) {
+                        console.error('Ошибка загрузки тега:', error);
+                    }
+                });
+                examTags.appendChild(tagElement);
+            });
+            
+            examCodeInput.value = taskObj.startingCode || '';
+            examAnswerInput.value = '';
+            examLlmResponse.innerHTML = '<div class="placeholder">Решение будет проверено автоматически после отправки</div>';
+            
+            taskCounter.innerHTML = `Задача <span id="currentTaskNum">${taskObj.number}</span> из 27`;
+        }
+        
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const minutes = Math.floor(timerSeconds / 60);
+                const seconds = timerSeconds % 60;
+                timerElement.textContent = `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        function resetTimer() {
+            timerSeconds = 0;
+            timerElement.textContent = '⏱️ 00:00';
+        }
+        
+        function updateNavigationButtons() {
+            const hasPrevSub = currentSubTasks && currentSubIndex > 0;
+            prevTaskBtn.disabled = !(hasPrevSub || currentTaskIndex > 0);
+            
+            const hasNextSub = currentSubTasks && (currentSubIndex < currentSubTasks.length - 1);
+            const hasNextFile = currentTaskIndex < availableTasks.length - 1;
+            nextExamTaskBtn.disabled = !(hasNextSub || hasNextFile);
+        }
+        
+        async function handleExamSubmit() {
+            const code = examCodeInput.value.trim();
+            const answer = examAnswerInput.value.trim();
+            
+            if (!code && !answer) {
+                examLlmResponse.innerHTML = '<div class="warning-message">Пожалуйста, введите код или ответ.</div>';
+                return;
+            }
+            
+            examSubmitBtn.disabled = true;
+            examSubmitBtn.textContent = 'Проверяем...';
+            
+            try {
+                const payload = {
+                    taskNumber: currentTaskNumber,
+                    code,
+                    answer,
+                    timeSpent: timerSeconds
+                };
+                if (currentSubTasks) {
+                    payload.subIndex = currentSubIndex;
+                }
+                
+                const result = await API.checkExamSolution(payload);
+                
+                examLlmResponse.innerHTML = result.response || JSON.stringify(result);
+                
+                if (result.success) {
+                    DataLoader.saveExamResult(currentTaskNumber, {
+                        success: true,
+                        score: result.score || 0,
+                        timeSpent: timerSeconds,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    loadStatistics();
+                }
+                
+            } catch (error) {
+                console.error('Ошибка проверки:', error);
+                examLlmResponse.innerHTML = `
+                    <div class="error-message">
+                        <p>Ошибка при проверке решения. Пожалуйста, попробуйте снова.</p>
+                    </div>
+                `;
+            } finally {
+                examSubmitBtn.disabled = false;
+                examSubmitBtn.textContent = 'Отправить на проверку';
+            }
+        }
+        
+        async function loadStatistics() {
+            try {
+                const stats = await DataLoader.getUserStatistics();
+                
+                userStatistics.innerHTML = `
+                    <h4>📊 Ваша статистика:</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-value">${stats.completedTasks}</span>
+                            <span class="stat-label">решено</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${stats.accuracy}%</span>
+                            <span class="stat-label">точность</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${stats.averageTime}</span>
+                            <span class="stat-label">среднее время</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">${stats.totalScore}</span>
+                            <span class="stat-label">общий балл</span>
+                        </div>
+                    </div>
+                    <div class="progress-summary">
+                        <p>Прогресс: ${stats.progress}% заданий изучено</p>
+                        <div class="chart-bar">
+                            <div class="chart-fill" style="width: ${stats.progress}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+                userStatistics.innerHTML = '<p>Не удалось загрузить статистику</p>';
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

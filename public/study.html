@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изучение темы</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container study-mode">
+        <div class="top-panel">
+            <div class="study-info">
+                <span class="tag-badge" id="currentTagName">Загрузка...</span>
+                <span class="task-number" id="currentTaskNumber">Задание</span>
+            </div>
+            <div class="progress">
+                <span>Прогресс: </span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <span id="progressText">0/0 задач</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="theory-section">
+                <div class="section-title">Теория</div>
+                <div class="theory-content" id="theoryContent">
+                </div>
+            </div>
+
+            <div class="practice-section">
+                <div class="section-title" id="practiceTitle">Практика</div>
+                
+                <div class="task-description" id="taskDescription">
+                </div>
+
+                <div class="code-editor">
+                    <div class="editor-header">
+                        <span>Редактор кода (Python)</span>
+                        <button class="upload-btn small" id="uploadCodeBtn">
+                            📁 Загрузить код
+                        </button>
+                    </div>
+                    <textarea id="codeInput" placeholder="Введите ваш код здесь..." spellcheck="false"></textarea>
+                </div>
+
+                <div class="answer-section">
+                    <input type="text" id="answerInput" placeholder="Введите ответ (если требуется)..." class="answer-input">
+                    <button class="submit-btn" id="submitBtn">Проверить решение</button>
+                </div>
+
+                <div class="response-section">
+                    <div class="section-title">Обратная связь</div>
+                    <div class="response-content" id="llmResponse">
+                        Здесь появится ответ системы после проверки
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-panel">
+            <button class="nav-btn secondary" onclick="window.location.href='index.html'">← К выбору задания</button>
+            <button class="nav-btn secondary" onclick="window.location.href='tags.html'">← Вернуться к тегам</button>
+            <button class="nav-btn" id="nextTaskBtn">Следующая задача →</button>
+            <button class="nav-btn exam" onclick="window.location.href='exam.html'">Перейти к реальному ЕГЭ</button>
+        </div>
+    </div>
+
+    <script src="data-loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it/dist/markdown-it.min.js"></script>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+    <script src="utils/formatter.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const currentTagName = document.getElementById('currentTagName');
+            const currentTaskNumber = document.getElementById('currentTaskNumber');
+            const theoryContent = document.getElementById('theoryContent');
+            const taskDescription = document.getElementById('taskDescription');
+            const practiceTitle = document.getElementById('practiceTitle');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const codeInput = document.getElementById('codeInput');
+            const answerInput = document.getElementById('answerInput');
+            const submitBtn = document.getElementById('submitBtn');
+            const nextTaskBtn = document.getElementById('nextTaskBtn');
+            const uploadCodeBtn = document.getElementById('uploadCodeBtn');
+            const llmResponse = document.getElementById('llmResponse');
+            
+            let currentTag = null;
+            let currentTask = null;
+            let currentProblems = [];
+            let currentProblemIndex = 0;
+            let userProgress = {};
+            
+            try {
+                const tagId = DataLoader.getCurrentTag();
+                const taskId = DataLoader.getCurrentTask();
+                
+                currentTag = await DataLoader.loadTag(tagId);
+                currentTask = await DataLoader.loadTask(taskId);
+                
+                currentTagName.textContent = currentTag.name;
+                currentTaskNumber.textContent = `Задание ${currentTask.number}`;
+                
+                theoryContent.innerHTML = Formatter.markdownToHtml(currentTag.theory);
+                
+                currentProblems = currentTag.problems || [];
+                
+                if (currentProblems.length === 0) {
+                    taskDescription.innerHTML = '<p class="error-message">Задачи для этого тега пока не добавлены.</p>';
+                    nextTaskBtn.disabled = true;
+                } else {
+                    userProgress = DataLoader.getUserProgress(tagId) || {
+                        completed: [],
+                        scores: {},
+                        currentIndex: 0
+                    };
+                    
+                    currentProblemIndex = userProgress.currentIndex || 0;
+                    currentProblemIndex = 0;
+                    updateProgress();
+                    loadProblem(currentProblemIndex);
+                }
+                
+                submitBtn.addEventListener('click', handleSubmit);
+                
+                nextTaskBtn.addEventListener('click', function() {
+                    if (currentProblemIndex < currentProblems.length - 1) {
+                        currentProblemIndex++;
+                        loadProblem(currentProblemIndex);
+                        userProgress.currentIndex = currentProblemIndex;
+                        DataLoader.saveUserProgress(tagId, userProgress);
+                        updateProgress();
+                    } else {
+                        llmResponse.innerHTML = `
+                            <div class="success-message">
+                                <h4>🎉 Поздравляем!</h4>
+                                <p>Вы завершили все задачи по теме "${currentTag.name}"!</p>
+                                <p>Теперь вы можете перейти к реальным задачам ЕГЭ.</p>
+                            </div>
+                        `;
+                    }
+                });
+                
+                uploadCodeBtn.addEventListener('click', function() {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.py,.txt';
+                    input.onchange = function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(event) {
+                                codeInput.value = event.target.result;
+                            };
+                            reader.readAsText(file);
+                        }
+                    };
+                    input.click();
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.ctrlKey && e.key === 'Enter') {
+                        handleSubmit();
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                theoryContent.innerHTML = '<div class="error-message">Ошибка загрузки данных. Проверьте файлы в папке /data.</div>';
+            }
+            
+            function loadProblem(index) {
+                if (index >= 0 && index < currentProblems.length) {
+                    const problem = currentProblems[index];
+                    practiceTitle.textContent = `Практика (Задача ${index + 1}/${currentProblems.length})`;
+                    taskDescription.innerHTML = Formatter.markdownToHtml(problem.description || 'Описание задачи не найдено.');
+                    codeInput.value = problem.startingCode || '';
+                    answerInput.value = '';
+                    llmResponse.textContent = 'Здесь появится ответ системы после проверки';
+                }
+            }
+            
+            async function handleSubmit() {
+                const code = codeInput.value.trim();
+                const answer = answerInput.value.trim();
+                const problem = currentProblems[currentProblemIndex];
+                
+                if (!code && !answer) {
+                    llmResponse.innerHTML = '<div class="warning-message">Пожалуйста, введите код или ответ.</div>';
+                    return;
+                }
+                
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Проверяем...';
+                
+                try {
+                    const result = await API.checkSolution({
+                        code,
+                        answer,
+                        problemId: problem.id,
+                        tag: currentTag.id,
+                        taskNumber: currentTask.number
+                    });
+                    
+                    llmResponse.innerHTML = result.response;
+                    
+                    if (result.success) {
+                        if (!userProgress.completed.includes(problem.id)) {
+                            userProgress.completed.push(problem.id);
+                        }
+                        userProgress.scores[problem.id] = result.score || 0;
+                        DataLoader.saveUserProgress(currentTag.id, userProgress);
+                        updateProgress();
+                    }
+                    
+                } catch (error) {
+                    console.error('Ошибка проверки решения:', error);
+                    llmResponse.innerHTML = `
+                        <div class="error-message">
+                            <p>Ошибка при проверке решения. Пожалуйста, попробуйте снова.</p>
+                            <p><small>${error.message}</small></p>
+                        </div>
+                    `;
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Проверить решение';
+                }
+            }
+            
+            function updateProgress() {
+                const completedCount = userProgress.completed?.length || 0;
+                const totalCount = currentProblems.length;
+                const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+                
+                progressFill.style.width = `${progressPercent}%`;
+                progressText.textContent = `${completedCount}/${totalCount} задач`;
+            }
+        });
+    </script>
+</body>
+</html>

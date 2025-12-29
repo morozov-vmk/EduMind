@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подготовка к ЕГЭ - Выбор задания</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <h1 id="appTitle">Подготовка к ЕГЭ по информатике</h1>
+            <p class="subtitle" id="appSubtitle">Выберите задание для тренировки</p>
+        </header>
+
+        <div class="tasks-grid" id="tasksGrid">
+        </div>
+
+        <div class="info-panel">
+            <div class="task-info">
+                <h3>Информация о заданиях:</h3>
+                <div id="taskInfoContent">
+                </div>
+            </div>
+            <button class="nav-btn" id="toExamBtn" disabled>
+                Перейти к реальным задачам
+            </button>
+        </div>
+
+        <footer class="footer">
+            <p id="footerText">Система подготовки к ЕГЭ по информатике © 2024</p>
+        </footer>
+    </div>
+
+    <script src="data-loader.js"></script>
+    <script src="main.js"></script>
+    <script src="navigation.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                const config = await DataLoader.loadConfig();
+                document.getElementById('appTitle').textContent = config.appName || 'Подготовка к ЕГЭ по информатике';
+                
+                const availableTasks = config.availableTasks || [5];
+                const allTasks = await DataLoader.loadAllTasks();
+                const tasksGrid = document.getElementById('tasksGrid');
+                const taskInfoContent = document.getElementById('taskInfoContent');
+                const toExamBtn = document.getElementById('toExamBtn');
+                const footerText = document.getElementById('footerText');
+                
+                footerText.textContent = `${config.appName || 'Система подготовки к ЕГЭ'} © ${new Date().getFullYear()}`;
+                
+                tasksGrid.innerHTML = '';
+                
+                for (let i = 1; i <= 27; i++) {
+                    const task = allTasks[i] || {
+                        number: i,
+                        title: `Задание ${i}`,
+                        available: false
+                    };
+                    
+                    const taskDiv = document.createElement('div');
+                    taskDiv.className = `task-card ${task.available ? 'active' : 'inactive'}`;
+                    taskDiv.innerHTML = `
+                        <div class="task-number">${i}</div>
+                        <div class="task-title">${task.title}</div>
+                        ${task.available ? 
+                            '<div class="task-badge">Активно</div>' : 
+                            '<div class="task-badge inactive">Скоро</div>'
+                        }
+                    `;
+                    
+                    if (task.available) {
+                        taskDiv.addEventListener('click', function() {
+                            DataLoader.setCurrentTask(i);
+                            window.location.href = 'tags.html';
+                        });
+                    }
+                    
+                    tasksGrid.appendChild(taskDiv);
+                }
+                
+                taskInfoContent.innerHTML = `
+                    <ul>
+                        <li>🎯 <strong>Активные задания:</strong> ${availableTasks.join(', ')}</li>
+                        <li>🔒 Остальные задания откроются позже</li>
+                        <li>📊 Всего заданий: 27</li>
+                    </ul>
+                `;
+                
+                if (availableTasks.length > 0) {
+                    toExamBtn.disabled = false;
+                    toExamBtn.addEventListener('click', function() {
+                        window.location.href = 'exam.html';
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Ошибка инициализации:', error);
+                document.getElementById('tasksGrid').innerHTML = 
+                    '<div class="error-message">Ошибка загрузки заданий. Проверьте подключение.</div>';
+            }
+        });
+    </script>
+</body>
+</html>

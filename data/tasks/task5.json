@@ -4,18 +4,30 @@
     "description": "Работа с алгоритмами, анализ их работы, преобразование чисел между системами счисления",
     "difficulty": "Средняя",
     "type": "Анализ алгоритмов",
-    "tags": ["loops", "arrays", "functions", "binary"],
-    "points": 1,
-    "recommendedTime": "30 минут",
-    "theoryOverview": "В этом задании требуется анализировать работу заданных алгоритмов, понимать принципы работы с двоичной системой счисления и уметь преобразовывать числа между системами счисления.",
-    "commonMistakes": [
-      "Неправильное преобразование чисел в двоичную систему",
-      "Ошибки в анализе работы алгоритма",
-      "Неучёт всех шагов преобразования"
+    "tags": [
+      "loop_for",
+      "checking_divisibility",
+      "indexing_rows",
+      "replace",
+      "remainder_of_the_division",
+      "whole_part_of_the_division",
+      "number_reversal",
+      "parity_bit",
+      "method_count",
+      "list_base",
+      "adding_left_right",
+      "function_int_str",
+      "bin_oct_hex",
+      "summ_digits",
+      "to_base",
+      "optimisation_with_one_cond",
+      "optimisation_with_two_cond",
+      "slice_vs_replace",
+      "type_of_zeros"
     ],
-    "successCriteria": {
-      "minScore": 7,
-      "maxTime": 600,
-      "requiredTags": ["loops", "binary"]
-    }
+    "points": 1,
+    "recommendedTime": "... минут",
+    "theoryOverview": "В этом задании требуется анализировать работу заданных алгоритмов, понимать принципы работы с системами счисления и уметь преобразовывать числа.",
+    "commonMistakes": [
+    ]
   }
